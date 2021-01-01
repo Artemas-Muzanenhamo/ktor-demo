@@ -1,3 +1,5 @@
+package com.artemas.example.com.artemas.example.routes
+
 import com.artemas.example.model.customerStorage
 import io.ktor.application.*
 import io.ktor.http.HttpStatusCode.Companion.NotFound
@@ -22,5 +24,11 @@ fun Route.customerRouting() {
         delete("{id}") {
 
         }
+    }
+}
+
+fun Application.registerCustomerRoutes() {
+    routing {
+        customerRouting()
     }
 }
