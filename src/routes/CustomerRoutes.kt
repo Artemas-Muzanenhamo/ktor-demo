@@ -1,12 +1,9 @@
-package com.artemas.example.com.artemas.example.routes
+package com.artemas.example.routes
 
 import com.artemas.example.model.Customer
 import com.artemas.example.model.customerStorage
 import io.ktor.application.*
 import io.ktor.http.*
-import io.ktor.http.HttpStatusCode.Companion.Accepted
-import io.ktor.http.HttpStatusCode.Companion.BadRequest
-import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
@@ -17,36 +14,37 @@ fun Route.customerRouting() {
             if (customerStorage.isNotEmpty()) {
                 call.respond(customerStorage)
             } else {
-                call.respondText("No customers found", status = NotFound)
+                call.respondText("No customers found", status = HttpStatusCode.NotFound)
             }
         }
         get("{id}") {
             val id = call.parameters["id"] ?: return@get call.respondText(
                 "Missing or malformed id",
-                status = BadRequest
+                status = HttpStatusCode.BadRequest
             )
             val customer =
                 customerStorage.find { it.id == id } ?: return@get call.respondText(
                     "No customer with id $id",
-                    status = NotFound
+                    status = HttpStatusCode.NotFound
                 )
             call.respond(customer)
         }
         post {
             val customer = call.receive<Customer>()
             customerStorage.add(customer)
-            call.respondText("Customer stored correctly", status = Accepted)
+            call.respondText("Customer stored correctly", status = HttpStatusCode.Accepted)
         }
         delete("{id}") {
-            val id = call.parameters["id"] ?: return@delete call.respond(BadRequest)
+            val id = call.parameters["id"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
             if (customerStorage.removeIf { it.id == id }) {
-                call.respondText("Customer removed correctly", status = Accepted)
+                call.respondText("Customer removed correctly", status = HttpStatusCode.Accepted)
             } else {
-                call.respondText("Not Found", status = NotFound)
+                call.respondText("Not Found", status = HttpStatusCode.NotFound)
             }
         }
     }
 }
+
 
 fun Application.registerCustomerRoutes() {
     routing {
